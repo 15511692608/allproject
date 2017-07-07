@@ -1,0 +1,28 @@
+server:
+  port: 8811
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/manageplane?characterEncoding=UTF-8
+    username: root
+    password: 123456
+    time-between-eviction-runs-millis: 18800
+    max-idle: 15
+    min-idle: 1
+    max-wait: 10000
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQL5Dialect
+  data:
+    mongodb:
+      url: mongodb://127.0.0.1:27017/manage
+      host: 127.0.0.1
+      port: 27017
+      database: manage
+#      username: root
+#      password: 123456
+
+
