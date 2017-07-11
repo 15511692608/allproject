@@ -14,7 +14,7 @@ spring:
     database: mysql
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
       dialect: org.hibernate.dialect.MySQL5Dialect
   data:
     mongodb:
@@ -33,3 +33,9 @@ spring:
       max-wait: -1
       min-idle: 0
 
+
+
+web:
+  aes: 667661
+  profiles: jwt
+  JWT_KEY: 77103GAS27410312QWG786
