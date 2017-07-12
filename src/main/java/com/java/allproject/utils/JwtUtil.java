@@ -24,6 +24,7 @@ public class JwtUtil {
     @Value("${web.JWT_KEY}")
     private String key;
 
+    private static Long ttlMillis=72000*3600L;
     /**
      * 由字符串生成加密key
      * @return
@@ -39,11 +40,10 @@ public class JwtUtil {
      * 创建jwt
      * @param id
      * @param subject
-     * @param ttlMillis
      * @return
      * @throws Exception
      */
-    public String createJWT(String id, String subject, long ttlMillis) throws Exception {
+    public String createJWT(String id, String subject) throws Exception {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
@@ -67,22 +67,28 @@ public class JwtUtil {
      * @return
      * @throws Exception
      */
-    public Claims parseJWT(String jwt) throws Exception{
+    public String parseJWT(String jwt) throws Exception{
         SecretKey key = generalKey();
         Claims claims = Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(jwt).getBody();
-        return claims;
+        String user = claims.getSubject();
+        if(claims.getExpiration().before(new Date())){
+            return null;
+        }
+        return user;
     }
 
 
     public static void main(String[]args) throws Exception {
         JwtUtil j=new JwtUtil();
         Map map=new HashMap();
-        map.put("role",1);
-        String s=j.createJWT("1",map.toString(),72000*3600L);
+        String s=j.createJWT("4","{\"id\":4,\"phone\":\"15511692600\",\"nickname\":null,\"mail\":null,\"password\":\"3d9188577cc9bfe9291ac66b5cc872b7\",\"status\":1}");
         System.out.println(s);
-        System.out.println(j.parseJWT(s));
+        //eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNDk5ODQ5Mzc5LCJzdWIiOiJ7XCJpZFwiOjQsXCJwaG9uZVwiOlwiMTU1MTE2OTI2MDBcIixcIm5pY2tuYW1lXCI6bnVsbCxcIm1haWxcIjpudWxsLFwicGFzc3dvcmRcIjpcIjNkOTE4ODU3N2NjOWJmZTkyOTFhYzY2YjVjYzg3MmI3XCIsXCJzdGF0dXNcIjoxfSIsImV4cCI6MTUwMDEwODU3OX0.kBe1rfCA_EHWCUwsIlwpdtJkRhh7xn3Liu3GmUCIWuw
+        //eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNDk5ODQ5MzQ0LCJzdWIiOiJ7XCJpZFwiOjQsXCJwaG9uZVwiOlwiMTU1MTE2OTI2MDBcIixcIm5pY2tuYW1lXCI6bnVsbCxcIm1haWxcIjpudWxsLFwicGFzc3dvcmRcIjpcIjNkOTE4ODU3N2NjOWJmZTkyOTFhYzY2YjVjYzg3MmI3XCIsXCJzdGF0dXNcIjoxfSIsImV4cCI6MTUwMDEwODU0NH0.8uWn6y_9Gb4AQVWZFKWUHWaCgj3YnD7RcUYMVpI0fx4
+
+        System.out.println(j.parseJWT("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNDk5ODUwMTUwLCJzdWIiOiJ7XCJpZFwiOjQsXCJwaG9uZVwiOlwiMTU1MTE2OTI2MDBcIixcIm5pY2tuYW1lXCI6bnVsbCxcIm1haWxcIjpudWxsLFwicGFzc3dvcmRcIjpcIjNkOTE4ODU3N2NjOWJmZTkyOTFhYzY2YjVjYzg3MmI3XCIsXCJzdGF0dXNcIjoxfSIsImV4cCI6MTUwMDEwOTM1MH0.XEfvCe5vA_iUSAM7Bp_AkaPEewNmxBlvIx-yFWBNvh0"));
 
     }
 }
