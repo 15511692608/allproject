@@ -32,7 +32,9 @@ spring:
       max-idle: 8
       max-wait: -1
       min-idle: 0
-
+  aop:
+    auto: true
+    proxy-target-class: true
 
 
 web:
