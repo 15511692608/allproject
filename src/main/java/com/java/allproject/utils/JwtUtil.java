@@ -68,15 +68,20 @@ public class JwtUtil {
      * @throws Exception
      */
     public String parseJWT(String jwt) throws Exception{
-        SecretKey key = generalKey();
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(jwt).getBody();
-        String user = claims.getSubject();
-        if(claims.getExpiration().before(new Date())){
-            return null;
+        try {
+            SecretKey key = generalKey();
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(jwt).getBody();
+            String user = claims.getSubject();
+            if (claims.getExpiration().before(new Date())) {
+                throw new Exception("token cannot be asserted and should not be trusted.");
+            }
+            return user;
+        }catch (Exception e){
+            throw new Exception("token cannot be asserted and should not be trusted.");
         }
-        return user;
+
     }
 
 

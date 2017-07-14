@@ -7,9 +7,12 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +29,7 @@ public class WebLogAspect {
 
     @Around("point()")
     public Object pointInt(ProceedingJoinPoint proceedingJoinPoint) {
-        System.out.println(123);
+
         long beginTime = System.currentTimeMillis();
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method method = signature.getMethod(); //获取被拦截的方法
@@ -62,12 +65,16 @@ public class WebLogAspect {
         return result;
     }
 
-    @After("point()")
-    public void After(){
-        LoginInterceptor.logger.info("1");
+    @AfterReturning(returning="object" ,pointcut="point()")
+    public void After(Object object){
+        LoginInterceptor.logger.info("response={}",object);
     }
     @Before("point()")
-    public void Before(){
-        LoginInterceptor.logger.info("2");
+    public void Before(JoinPoint joinPoint){
+        ServletRequestAttributes attributes= (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request=attributes.getRequest();
+
+        LoginInterceptor.logger.info("url={},method={},ip={},class={},args={}",request.getRequestURL(),request.getMethod(),request.getRemoteAddr(),joinPoint.getSignature().getDeclaringTypeName()+"."+
+        joinPoint.getSignature().getName(),joinPoint.getArgs());
     }
 }

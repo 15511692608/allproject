@@ -19,13 +19,8 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("register")
-    public Map register(User user){
-        try {
+    public Map register(User user) throws Exception {
            return userService.reg(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultParam.resultMapErr(null);
-        }
     }
 
     @RequestMapping("/token")

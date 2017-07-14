@@ -3,6 +3,7 @@ package com.java.allproject.Interceptor;
 import com.java.allproject.utils.JwtUtil;
 import com.java.allproject.utils.ResultParam;
 import com.java.allproject.webAPI.POJO.User;
+import com.java.allproject.webAPI.Repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,30 +24,27 @@ public class LoginInterceptor implements HandlerInterceptor {
     public static Logger logger= LoggerFactory.getLogger(LoginInterceptor.class);
     @Autowired
     private JwtUtil j;
-
+    @Autowired
+    private UserRepository repository;
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
         String name=httpServletRequest.getRequestURI();
-        logger.info(name);
+        logger.info("LoginInterceptor");
         String token=httpServletRequest.getParameter("token");
-        try {
-            if (!"".equals(token.trim()) || !"null".equals(token)) {
-                String u = j.parseJWT(token);
-                if (u == null) {
-
-                }
-                User user = ResultParam.objectMapper.readValue(u, User.class);
-                return true;
-
-            } else {
-                throw new Exception();
+        if (token != null && (!"".equals(token.trim()) || !"null".equals(token))) {
+            String u = j.parseJWT(token);
+            if (u == null) {
+                throw new Exception("request is err");
             }
-        }catch (Exception e){
-            httpServletResponse.setCharacterEncoding("UTF-8");
-            httpServletResponse.setContentType("application/json;charset=UTF-8");
-            httpServletResponse.getWriter().print(ResultParam.objectMapper.writeValueAsString(ResultParam.resultMapErr(null)));
-            return false;
+            User user = ResultParam.objectMapper.readValue(u, User.class);
+            if (repository.findOne(user.getId())==null) {
+                throw new Exception("token is err");
+            } else {
+                return true;
+            }
+        } else {
+            throw new Exception("no request");
         }
     }
 
