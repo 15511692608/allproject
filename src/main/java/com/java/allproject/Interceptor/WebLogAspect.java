@@ -28,7 +28,7 @@ public class WebLogAspect {
     public void point(){}
 
     @Around("point()")
-    public Object pointInt(ProceedingJoinPoint proceedingJoinPoint) {
+    public Object pointInt(ProceedingJoinPoint proceedingJoinPoint) throws Exception {
 
         long beginTime = System.currentTimeMillis();
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -59,8 +59,8 @@ public class WebLogAspect {
                 LoginInterceptor.logger.info("请求返回：{}", result);
             }
         } catch (Throwable e) {
-            LoginInterceptor.logger.info("exception: {}", e);
-
+            LoginInterceptor.logger.info("exception: {}", e.getMessage());
+            throw new Exception(e.getMessage());
         }
         return result;
     }

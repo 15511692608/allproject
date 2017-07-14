@@ -2,8 +2,10 @@ package com.java.allproject.webAPI.POJO;
 
 import lombok.Data;
 import lombok.Generated;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by admin on 2017/7/11.
@@ -23,4 +25,7 @@ public class User {
     private String password;
     @Column(length=2,nullable = false )
     private int status=1;
+    @Column(updatable = false,nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTime=new Date();
 }
