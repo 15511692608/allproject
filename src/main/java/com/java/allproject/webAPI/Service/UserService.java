@@ -30,7 +30,7 @@ public class UserService {
 
     public Map reg(User user) throws Exception {
         if(user.getPhone()==null || user.getPhone().length()!=11){
-            throw new Exception();
+            throw new Exception("is not found");
         }
         user.setPassword(MD5Util.endcodeMd5(user.getPassword()));
         User u= userRepository.save(user);
